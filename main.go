@@ -5,13 +5,12 @@ package main
 import (
     "os"
     "fmt"
-    "./pkg/asciilines"
+    "./asciilines"
 )
 
 func main() {
-    for arg, _ := range os.Args {
-        fmt.Println(arg)
-        ascii, err := asciilines.LoadTVG(os.Args[arg])
+    for _, arg := range os.Args[1:] {
+        ascii, err := asciilines.LoadTVG(arg)
         if err != nil {
             fmt.Println(err)
         }

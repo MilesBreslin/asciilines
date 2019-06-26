@@ -11,38 +11,38 @@ import (
 
 type AsciiLines [][]byte
 
-func LoadTVG(filename string) (AsciiLines, error) {
+func LoadTVG(filename string) (*AsciiLines, error) {
     var state AsciiLines
 
     _, err := os.Stat(filename)
     if err != nil {
-        return state, err
+        return nil, err
     }
 
     source, err := ioutil.ReadFile(filename)
     if err != nil {
-        return state, err
+        return nil, err
     }
 
     lines := strings.Split(string(source), "\n")
 
     arguments := strings.Split(lines[0], " ")
     if len(arguments) != 2 {
-        return state, errors.New("Wrong number of arguments")
+        return nil, errors.New("Wrong number of arguments")
     }
 
     xSize, err := strconv.Atoi(arguments[0])
     if err != nil {
-        return state, err
+        return nil, err
     }
 
     ySize, err := strconv.Atoi(arguments[1])
     if err != nil {
-        return state, err
+        return nil, err
     }
 
     if xSize < 1 || ySize < 1 {
-        return state, errors.New("Invalid dimension integer value")
+        return nil, errors.New("Invalid dimension integer value")
     }
 
     state = make(AsciiLines, xSize)
@@ -57,29 +57,29 @@ func LoadTVG(filename string) (AsciiLines, error) {
         if lines[line] != "" {
             parameters := strings.Split(lines[line], " ")
             if len(parameters) != 5 {
-                return state, errors.New("Invalid line length")
+                return nil, errors.New("Invalid line length")
             }
 
             var character byte
             if len(parameters[0]) == 1 {
                 character = parameters[0][0]
             } else {
-                return state, errors.New("Character must be a single ascii character")
+                return nil, errors.New("Character must be a single ascii character")
             }
 
             xStart, err := strconv.Atoi(parameters[1])
             if err != nil {
-                return state, err
+                return nil, err
             }
 
             yStart, err := strconv.Atoi(parameters[2])
             if err != nil {
-                return state, err
+                return nil, err
             }
 
             length, err := strconv.Atoi(parameters[4])
             if err != nil {
-                return state, err
+                return nil, err
             }
 
             var horizontal bool
@@ -88,7 +88,7 @@ func LoadTVG(filename string) (AsciiLines, error) {
             } else if parameters[3] == "v" {
                 horizontal = false
             } else {
-                return state, errors.New("Line must be either horizontal (h) or vertical (v)")
+                return nil, errors.New("Line must be either horizontal (h) or vertical (v)")
             }
 
             for i := 0; i < length; i++ {
@@ -109,7 +109,7 @@ func LoadTVG(filename string) (AsciiLines, error) {
         }
     }
 
-    return state, nil
+    return &state, nil
 }
 
 func (a *AsciiLines) Print() {
